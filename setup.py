@@ -7,10 +7,12 @@ setup(
     author_email='lorenzo.mentaschi@unige.it',
     packages=['alphaBetaLab', 'alphaBetaLab.plot'],
     install_requires=[
-        "numpy >= 1.8.2",
-        "shapely >= 1.5.9",
+        "numpy >=1.8.2",
+        "shapely >=1.5.9,<2.0",
         "basemap",
-        "pyproj <= 5.2"
+        "netcdf4",
+        "pandas",
+        "scipy"
     ],
 )
- 
+
