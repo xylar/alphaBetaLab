@@ -10,9 +10,10 @@ def _computeAvgDir(cell):
   _computeAvgDir: computes the average direction of the minimum rectangle enclosing the polygon
   modulo np.pi/2
   works well for rectangular cells, not ideal for other cells, but for now can do
-  
+
   """
   rect = cell.minimum_rotated_rectangle
+  print(rect)
   crds = np.array(list(rect.boundary.coords[:]))
   xs = np.array([c[0] for c in crds[:2]])
   ys = np.array([c[1] for c in crds[:2]])
@@ -25,7 +26,7 @@ class abCellSize:
   def __init__(self, cell):
     """
     abCellSize: compute the approximate size of a cell in whatever direction.
-    Computes the sizes at directions of 
+    Computes the sizes at directions of
     0, a, pi/2, pi/2 + a, pi radiants with respect to the main axis of the cell,
     with respect to the average direction of the polygon.
     where a=arctan(dy/dx), dx, dy being the x-y sizes of the cell.
@@ -39,11 +40,11 @@ class abCellSize:
     self.cellYs = None
     self.majorAxisDir = None
     self._computeSizeAtMainDirections()
-    
+
 
   def _computeSizeAtMainDirections(self):
     """
-    computes the sizes at directions of 
+    computes the sizes at directions of
     0, arctan(dy/dx), pi/2, pi/2 + arctan(dy/dx), pi radiants
     """
     cell = self.cell
@@ -66,13 +67,13 @@ class abCellSize:
     angle = np.arctan2(dy, dx)
     a[1] = avgDir + angle
     a[3] = avgDir + np.pi - angle
-    
+
     rcell = aff.rotate(cell, -angle, use_radians=True)
     crds = list(rcell.boundary.coords)
     xs = np.array([c[0] for c in crds])
     dx = max(xs) - min(xs)
     s[1] = dx
-    
+
     rcell = aff.rotate(cell, +angle, use_radians=True)
     crds = list(rcell.boundary.coords)
     xs = np.array([c[0] for c in crds])
@@ -131,9 +132,9 @@ class abCellSize:
         intpsize = (w1*sz1_ + w2*sz2_)/(w1 + w2)
       else:
         intpsize = sz2
-    
+
     return intpsize
-    
+
 
   def computeSizes(self, directions):
     sizes = []
@@ -142,7 +143,7 @@ class abCellSize:
       sizes.append(sz)
     return np.array(sizes)
 
-    
+
   def computeSizesKm(self, directions):
     sizes = self.computeSizes(directions)
     cellLonLat = self.cell

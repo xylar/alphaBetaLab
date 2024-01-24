@@ -22,11 +22,11 @@ class abSingleCellBetaEstimator:
       self.alphaMtx = alphaMtx
     else:
       self.alphaMtx = alphaMtx.getAlphaSubMatrix(polygon)
-    self.kshape = kshape if (kshape != -1) else defaultKShape; 
+    self.kshape = kshape if (kshape != -1) else defaultKShape;
     self.obstrAlleviationEnabled = False
     self.maxSubSections = maxSubSections
     self.recalib = abAlphaBetaRecalibrator.abAlphaBetaRecalibrator(obstFactor = recalibFactor)
-  
+
   def computeBeta(self, direction, frequency):
     if not self.alphaMtx.empty():
       firstOctTransf = abFirstOctantTransformation(self.alphaMtx, self.polygon)
@@ -36,7 +36,7 @@ class abSingleCellBetaEstimator:
         import abHighResAlphaMatrixPlot as pp
         pp.plotHiResAlphaMtx('orig. mtx/poly/theta', self.alphaMtx, direction)
         pp.plotHiResAlphaMtxAndShow('rot. mtx/poly/theta', alphaMtx, theta)
-  
+
       b = self._getBetaFirstOctant(theta, frequency, alphaMtx, lowResCell)
       b = self.recalib.recalibrate(b)
       return b
@@ -53,7 +53,7 @@ class abSingleCellBetaEstimator:
       minarr, maxarr = np.min(array), np.max(array)
       valGtArray = (val > array).all() and not abutls.isClose(val, maxarr)
       valLtArray = (val < array).all() and not abutls.isClose(val, minarr)
-      
+
       if not (valGtArray or valLtArray):
         return array
 
@@ -65,14 +65,14 @@ class abSingleCellBetaEstimator:
         return np.concatenate((array, np.array([val])))
       else:
         return np.concatenate((np.array([val]), array))
-        
+
 
     if len(alphaMtx.alphas.shape) < 2:
       return 1
     normTheta = theta + np.pi/2.
     normSlope = np.tan(normTheta) if not abutls.isClose(theta, 0, thetaTolerance) else np.nan
 
-    cell = alphaMtx.polygon 
+    cell = alphaMtx.polygon
     try:
       crds = list(cell.boundary.coords)
     except:
@@ -88,7 +88,7 @@ class abSingleCellBetaEstimator:
     miny = min(ys)
     maxy = max(ys)
 
-    #getting x coords and extending them 
+    #getting x coords and extending them
     #so that trasverse polygons can cover the whole cell
     xs = alphaMtx.xs[:]
     xs = catValueToArrayIfOutside(xs, min(cellxs))
@@ -108,12 +108,12 @@ class abSingleCellBetaEstimator:
     maxx = max(xs)
     alphas = []
     dys = []
-    
+
     def getPolygonDY(pl):
       crds = list(pl.boundary.coords)
       plxs = np.array([c[0] for c in crds])
       plys = np.array([c[1] for c in crds])
-      plprojy = plys + (maxx - plxs)*np.tan(theta) 
+      plprojy = plys + (maxx - plxs)*np.tan(theta)
       dy = max(plprojy) - min(plprojy)
       return dy
 
@@ -149,21 +149,18 @@ class abSingleCellBetaEstimator:
         totDy = getPolygonDY(subcell)
       elif subcell.__class__ in [g.GeometryCollection, g.MultiPolygon]:
         #the intersection between the trasverse polygon and the cell
-        #is a collection of polygons (possible for concave cells). 
-        #Computing the alpha for each subpolygon, and 
+        #is a collection of polygons (possible for concave cells).
+        #Computing the alpha for each subpolygon, and
         #weight-averaging to compute the overall alpha
         totDy = 0
-        if isinstance(subcell, g.MultiPolygon):
-          cellitr = subcell.geoms
-        else:
-          cellitr = subcell
+        cellitr = subcell.geoms
         plobstrs = []
         pldys = []
         for pl in cellitr:
           if pl.__class__ == g.Polygon:
             alphaEst = abSingleCellAlphaEstimator(pl, alphaMtx, kshape = self.kshape)
             alphaEst.obstrAlleviationEnabled = self.obstrAlleviationEnabled
-            palpha = alphaEst.computeAlpha(theta, frequency) 
+            palpha = alphaEst.computeAlpha(theta, frequency)
             dy = getPolygonDY(pl)
             plobstrs.append(1 - palpha)
             pldys.append(dy)
@@ -187,4 +184,4 @@ class abSingleCellBetaEstimator:
     return beta
 
 
- 
+
