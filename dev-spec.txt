@@ -1,0 +1,8 @@
+# dev dependencies for conda environment
+numpy >=1.8.2
+shapely >=2.0,<3.0
+basemap
+netcdf4
+pandas
+scipy
+
