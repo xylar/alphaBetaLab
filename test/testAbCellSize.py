@@ -10,7 +10,7 @@ class testAbCellSize(unittest.TestCase):
     crds = [[0,0], [1,0], [1,2], [0,2], [0,0]]
     cell0 = g.Polygon(crds)
 
-    cell = cell0 
+    cell = cell0
     avgDir = _computeAvgDir(cell)
     self.assertAlmostEqual(0, avgDir)
 
@@ -45,7 +45,7 @@ class testAbCellSize(unittest.TestCase):
 
     cell = a.rotate(cell0, np.pi/6, use_radians=True)
     avgDir = _computeAvgDir(cell)
-    self.assertAlmostEqual(angle0 + np.pi/6, avgDir)
+    self.assertAlmostEqual((angle1 + np.pi/6) % (np.pi/2.), avgDir)
 
     cell = a.rotate(cell0, -np.pi/6, use_radians=True)
     avgDir = _computeAvgDir(cell)
@@ -177,7 +177,7 @@ class testAbCellSize(unittest.TestCase):
     self.assertAlmostEqual(dang21, expdang21)
     self.assertAlmostEqual(dang22, expdang20)
     self.assertAlmostEqual(dang23, expdang21)
-    
+
 
 if __name__ == '__main__':
   unittest.main()
